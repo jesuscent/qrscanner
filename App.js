@@ -42,52 +42,41 @@ function App() {
   }
 
   return (
-  
-  <View>
-       <QRCodeScanner
-      containerStyle={{ backgroundColor:"white"}}
-      onRead={alerta}
-      reactivate={true}
-      reactivateTimeout={3000}
-      permissionDialogMessage="¿Puedo usar tu camara?"
-      showMarker={true}
-      markerStyle={{ borderColor: "green", borderRadius: 10 }}
-      bottomContent={
-        <TouchableOpacity>
-          <Text style={{fontSize:21, color:"rgb(0,122,255)"}}>
-            Escaneando...
-          </Text>
+    <View>
+      <QRCodeScanner
+        containerStyle={{backgroundColor: 'white'}}
+        onRead={alerta}
+        reactivate={true}
+        reactivateTimeout={3000}
+        permissionDialogMessage="¿Puedo usar tu camar?"
+        showMarker={true}
+        markerStyle={{borderColor: 'green', borderRadius: 10}}
+        bottomContent={
+          <TouchableOpacity>
+            <Text style={{fontSize: 21, color: 'rgb(0,122,255)'}}>
+              Escaneando...
+            </Text>
+          </TouchableOpacity>
+        }></QRCodeScanner>
 
-        </TouchableOpacity>
-      }
-    >
-      
-      </QRCodeScanner>
-      
       <AwesomeAlert
-          show={alert}
-          showProgress={false}
-          title="Bien"
-          message="el usuario a sido encontrado"
-          closeOnTouchOutside={true}
-          closeOnHardwareBackPress={false}
-          showCancelButton={false}
-          showConfirmButton={true}
-          confirmText="VERIFICAR"
-          confirmButtonColor="#DD6B55"
-          onConfirmPressed={() => {
-            hideAlert()
-            setModalVisible(true)
-            
-          }}
+        show={alert}
+        showProgress={false}
+        title="Bien"
+        message="el usuario a sido encontrado"
+        closeOnTouchOutside={true}
+        closeOnHardwareBackPress={false}
+        showCancelButton={false}
+        showConfirmButton={true}
+        confirmText="VERIFICAR"
+        confirmButtonColor="#DD6B55"
+        onConfirmPressed={() => {
+          hideAlert();
+          setModalVisible(true);
+        }}
       />
 
-      <Modal
-        animationType="slide"
-        transparent={false}
-        visible={modalVisible}
-      >
-      
+      <Modal animationType="slide" transparent={false} visible={modalVisible}>
         <View>
           <Text> {json.nombre}</Text>
           <View>
@@ -101,21 +90,15 @@ function App() {
           <View>
             <Text>Acesso a dia 3: {json.evento3} </Text>
           </View>
-          <Button onPress={() => setModalVisible(!modalVisible)}
+          <Button
+            onPress={() => setModalVisible(!modalVisible)}
             title="OK"
             color="blue"
           />
-
         </View>
-        
       </Modal>
-      
-  </View>
-  
-
-  
- 
-)
+    </View>
+  );
 
  }
 
