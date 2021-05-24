@@ -13,7 +13,7 @@
     "react": "17.0.1",
     "react-native": "0.64.1",
     "react-native-awesome-alerts": "^1.4.2",
-    "react-native-camera": "^3.43.6",
+    "react-native-camera": "^3.43.9",
     "react-native-permissions": "^2.2.2",
     "react-native-qrcode-scanner": "^1.5.4"
   },
@@ -24,6 +24,8 @@
     "babel-jest": "^26.6.3",
     "eslint": "7.14.0",
     "jest": "^26.6.3",
+    "metro": "^0.64.0",
+    "metro-core": "^0.64.0",
     "metro-react-native-babel-preset": "^0.64.0",
     "react-test-renderer": "17.0.1"
   },
