@@ -1,6 +1,10 @@
-import React, {useState} from 'react';
+
+import React from "react";
+import {useState} from 'react';
 import QRCodeScanner from 'react-native-qrcode-scanner'
-import { Text,Image, ImageBackground,Linking,StyleSheet,Separator, TouchableOpacity, Alert, TouchableHighlight , View, Modal, Button ,Pressable, ScrollView} from 'react-native';
+import { Text,Image,ActivityIndicator, ImageBackground,Linking,StyleSheet,Separator,
+   TouchableOpacity, Alert, TouchableHighlight , View, Modal, Button ,Pressable, ScrollView} from 'react-native';
+   import axios from 'axios';
 
 import AwesomeAlert from 'react-native-awesome-alerts';
 
@@ -13,52 +17,75 @@ function App() {
   const [modalVisible, setModalVisible] = useState(false);
   const [json, setjson] = useState("");
   const [infAlert,setinfAlert]= useState('');
+  const [datoqr,setDatoqr]=useState('');
+  const [nomInfo,setnomInfo]=useState();
  const showAlert = () => {
   setalert(true)
   };
  
  const hideAlert = () => {
    setalert(false)
-  
   };
 
   const alerta = e => {
-    console.log( "qr stting "+e.data)
-    showAlert()
-    fetch('http://syscontrol.azurewebsites.net/FLH/asistencia?QR=' + e.data + '')
-      .then(Response => Response.json())      
-      .then(data => console.log( "la data del api "+data[0]))
-      .then(data =>
-        setjson(data[0])
-       )
-      .catch(console.log)
-  }
+
+            console.info( "QR leido: "+e.data)
+              fetch('http://syscontrol.azurewebsites.net/FLH/asistencia?QR=' + e.data + '')
+              .then(Response => Response.json())  
+              .then(data =>  setjson(data))      
+              .catch(error => console.error('Error:', error))
+            
+        // validamos si data que esta en la variable json es null
+        if(json.Txt_QR != null){
+          console.log("informcación :"+json.nombreInvitado)
+          setnomInfo(json.nombreInvitado)
+          showAlert()
+          setDatoqr(null);
+          
+        }
+  }//cierre de metodo
+
+  
   const [count, setCount] = useState(0);
   const onPress = () => setCount(prevCount => prevCount + 1);
+const onclose=()=>{
+ 
+    setjson("");
+  setModalVisible(!modalVisible);
+
+}
+
   return (
-    <View>
-      <QRCodeScanner
-        containerStyle={{backgroundColor: 'white'}}
+    <>
+     <QRCodeScanner
+        containerStyle={{backgroundColor: '#38006b'}}
         onRead={alerta}
        reactivate={true}
-       //reactivateTimeout={6000}
+       reactivateTimeout={5000}
         permissionDialogMessage="¿Puedo usar tu camara?"
         showMarker={true}
-        markerStyle={{borderColor: 'green', borderRadius: 10}}
-            bottomContent={
+        markerStyle={{borderColor: 'green', borderRadius: 10}}   
+        topContent={          
+            <Text style={styles.tituloqr}>FBX40 </Text>
+        }    
+        bottomContent={
           <TouchableOpacity>
-            <Text style={{fontSize: 21, color: 'rgb(0,122,255)'}}>
-              Escaneando...
+            <Text style={styles.qrfooter}>
+              Buscando...
             </Text>
+            <ActivityIndicator size="large"  color="#00ff00" />
           </TouchableOpacity>
-        }>          
+        }       
+        >          
         </QRCodeScanner>
-
+       
+    <View>
+       
       <AwesomeAlert 
         show={alert}
         showProgress={true}
-        title="Invitado Encontrado"
-        message="Por favor validar la entrada al evento"
+        title="INVITADO ENCOTRADO"
+        message={nomInfo}
         closeOnTouchOutside={true}
         closeOnHardwareBackPress={false}
         showCancelButton={false}
@@ -70,16 +97,34 @@ function App() {
           setModalVisible(true);
         }}
       />
+      {/* <AwesomeAlert  
+        show={true}
+        showProgress={true}
+        title="DINNER & DRINKS" 
+        message="Por favor, validar la entrada del evento." 
+        closeOnTouchOutside={true}
+        closeOnHardwareBackPress={false}
+        showCancelButton={true}
+        showConfirmButton={true}
+        confirmText="VALIDAR"
+        cancelText="CANCELAR"
+        confirmButtonColor="green"
+        cancelButtonColor="red"
+        onConfirmPressed={() => {
+          hideAlert();
+          setModalVisible(true);
+        }}
+      /> */}
       <Modal animationType="slide" transparent={false} visible={modalVisible}>
      
         <ScrollView>
-          <Text style={styles.titulo}>Entrada de evento {count}</Text>          
-          <TouchableOpacity style={styles.viewcard1} onPress={onPress} >          
+          <Text style={styles.titulo}>Entrada de evento {count} </Text>          
+          <TouchableOpacity style={styles.viewcard1} onPress={onPress} disabled={false}  >          
                 <View style={styles.viewcardcontent}> 
                 <Text style={styles.tituloCard}>Invitado:</Text> 
-                <Text style={styles.texto}> Jesús guadalupe Centeno centeno {json.evento1}  </Text> 
+                <Text style={styles.texto}> {json.nombreInvitado}  </Text> 
                 <Text style={styles.tituloCard}>Acompañante:</Text> 
-                <Text style={styles.texto}> Jesús guadalupe Centeno centeno {json.evento1}  </Text> 
+                <Text style={styles.texto}>{json.NombreAcompanante}  </Text> 
                 <Text style={styles.texto}>{"\n"}25 de junio 2021</Text>                   
                 </View>
                 <View style={styles.viewcardcontent2}> 
@@ -91,12 +136,12 @@ function App() {
             />
              </View> 
           </TouchableOpacity>
-          <TouchableOpacity style={styles.viewcard2} >          
+          <TouchableOpacity style={styles.viewcard2} disabled={true}  >          
                 <View style={styles.viewcardcontent}> 
                 <Text style={styles.tituloCard}>Invitado:</Text> 
-                <Text style={styles.texto}>Jesús guadalupe Centeno centeno {json.evento1}  </Text> 
+                <Text style={styles.texto}>{json.nombreInvitado}  </Text> 
                 <Text style={styles.tituloCard}>Acompañante:</Text> 
-                <Text style={styles.texto}> Jesús guadalupe Centeno centeno {json.evento1}  </Text> 
+                <Text style={styles.texto}> {json.NombreAcompanante}  </Text> 
                 <Text style={styles.texto}>{"\n"}26 de junio 2021</Text>                   
                 </View>
                 <View style={styles.viewcardcontent2}> 
@@ -108,12 +153,12 @@ function App() {
             />
              </View> 
           </TouchableOpacity>
-          <TouchableOpacity style={styles.viewcard3} >          
+          <TouchableOpacity style={styles.viewcard3} disabled={true} >          
                 <View style={styles.viewcardcontent}> 
                 <Text style={styles.tituloCard}>Invitado:</Text> 
-                <Text style={styles.texto}> Jesús guadalupe Centeno centeno {json.evento1}  </Text> 
+                <Text style={styles.texto}> {json.nombreInvitado}  </Text> 
                 <Text style={styles.tituloCard}>Acompañante:</Text> 
-                <Text style={styles.texto}> Jesús guadalupe Centeno centeno {json.evento1}  </Text> 
+                <Text style={styles.texto}> {json.NombreAcompanante}  </Text> 
                 <Text style={styles.texto}>{"\n"}27 de junio 2021</Text>                   
                 </View>
                 <View style={styles.viewcardcontent2}> 
@@ -126,7 +171,7 @@ function App() {
              </View> 
           </TouchableOpacity>
           
-          <TouchableOpacity style={styles.btn} onPress={() => setModalVisible(!modalVisible)} >
+          <TouchableOpacity style={styles.btn} onPress={() => onclose()} >
           <Text style={styles.texto}>
           ESCANEAR NUEVO INVITADO
               </Text> 
@@ -134,11 +179,18 @@ function App() {
         </ScrollView>
       </Modal>
     </View>
+    </>
   );
 
  }
 
  const styles = StyleSheet.create({
+  centerText: {
+    flex: 1,
+    fontSize: 18,
+    padding: 32,
+    color: '#777'
+  },
    titulo:{
      textAlign:'center',
      fontSize:30,
@@ -191,7 +243,7 @@ function App() {
   shadowRadius: 4,
   shadowOpacity: 0.26,
   elevation: 8,
-  backgroundColor: '#9c4dcc',  
+  backgroundColor: '#A09AA7',  
   borderRadius: 15,
   margin:5,  
  },
@@ -203,7 +255,7 @@ function App() {
   shadowRadius: 4,
   shadowOpacity: 0.26,
   elevation: 8,
-  backgroundColor: '#38006b',  
+  backgroundColor: '#000000',  
   borderRadius: 15,
   margin:5,  
  },
@@ -242,7 +294,16 @@ function App() {
   alignContent:'center',
   alignItems:'center'
  },
- 
+ tituloqr:{
+color:'white',
+fontSize:69,
+paddingBottom:80
+ },
+ qrfooter:{
+   fontSize:30,
+   color:'white',
+   paddingTop:50,
+ }
 });
 
 export default App;
