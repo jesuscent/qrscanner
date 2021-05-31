@@ -15,7 +15,7 @@ function App() {
 
   const [alert, setalert] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-  const [json, setjson] = useState("");
+  const [json, setjson] = useState([]);
   const [infAlert,setinfAlert]= useState('');
   const [datoqr,setDatoqr]=useState('');
   const [nomInfo,setnomInfo]=useState();
@@ -28,17 +28,29 @@ function App() {
   };
 
   const alerta = e => {
-
-            console.info( "QR leido: "+e.data)
-              fetch('http://syscontrol.azurewebsites.net/FLH/asistencia?QR=' + e.data + '')
-              .then(Response => Response.json())  
-              .then(data =>  setjson(data))      
-              .catch(error => console.error('Error:', error))
+   
+    console.info( "QR leido: "+e.data)
+    async function fetchMoviesJSON() {
+      const response = await fetch('http://syscontrol.azurewebsites.net/FLH/asistencia?QR=' + e.data + '');
+      const movies = await response.json();
+      return movies;
+    }
+    
+    fetchMoviesJSON().then(movies => {
+         console.log(movies); 
+         setjson(movies)        
+         showAlert()
+    });
+            // console.info( "QR leido: "+e.data)
+            //   fetch('http://syscontrol.azurewebsites.net/FLH/asistencia?QR=' + e.data + '')
+            //   .then(Response => Response.json())  
+            //   .then(data =>  setjson(data))      
+            //   .catch(error => console.error('Error:', error))
             
         // validamos si data que esta en la variable json es null
         if(json.Txt_QR != null){
-          console.log("informcación :"+json.nombreInvitado)
-          setnomInfo(json.nombreInvitado)
+          console.log("información :"+json.nombreInvitado)
+         // setnomInfo(json.nombreInvitado)
           showAlert()
           setDatoqr(null);
           
@@ -50,7 +62,8 @@ function App() {
   const onPress = () => setCount(prevCount => prevCount + 1);
 const onclose=()=>{
  
-    setjson("");
+  setjson('')
+  setnomInfo('')
   setModalVisible(!modalVisible);
 
 }
@@ -60,8 +73,8 @@ const onclose=()=>{
      <QRCodeScanner
         containerStyle={{backgroundColor: '#38006b'}}
         onRead={alerta}
-       reactivate={true}
-       reactivateTimeout={5000}
+        reactivate={true}
+        reactivateTimeout={5000}
         permissionDialogMessage="¿Puedo usar tu camara?"
         showMarker={true}
         markerStyle={{borderColor: 'green', borderRadius: 10}}   
@@ -85,7 +98,7 @@ const onclose=()=>{
         show={alert}
         showProgress={true}
         title="INVITADO ENCOTRADO"
-        message={nomInfo}
+        message={json.nombreInvitado}
         closeOnTouchOutside={true}
         closeOnHardwareBackPress={false}
         showCancelButton={false}
