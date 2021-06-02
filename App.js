@@ -14,11 +14,19 @@ import { Colors,  DebugInstructions,  Header,  LearnMoreLinks,  ReloadInstructio
 function App() {
 
   const [alert, setalert] = useState(false);
+  const [alert1, setalert2] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [json, setjson] = useState([]);
   const [infAlert,setinfAlert]= useState('');
-  const [datoqr,setDatoqr]=useState('');
-  const [nomInfo,setnomInfo]=useState();
+  const [valida,setvalida]=useState(false);
+  const [qrvalid,setqrvalid]=useState('');
+  const [diavalid,setdiavalid]=useState('');
+  const [eventvalida,seteventvalid]=useState('');
+  
+  const [car1,setcar1]=useState(false);
+  const [car2,setcar2]=useState(false);
+  const [car3,setcar3]=useState(false);
+
  const showAlert = () => {
   setalert(true)
   };
@@ -26,52 +34,106 @@ function App() {
  const hideAlert = () => {
    setalert(false)
   };
+  const showAlert2 = () => {
+    setalert(true)
+    };
+   
+   const hideAlert2 = () => {
+     setalert2(false)
+    };
+  
+    
 
   const alerta = e => {
    
-    console.info( "QR leido: "+e.data)
-    async function fetchMoviesJSON() {
+    //console.info( "QR leido: "+e.data)
+    async function getInfo() {
       const response = await fetch('http://syscontrol.azurewebsites.net/FLH/asistencia?QR=' + e.data + '');
-      const movies = await response.json();
-      return movies;
+      const invitado = await response.json();
+      return invitado;
     }
     
-    fetchMoviesJSON().then(movies => {
-         console.log(movies); 
-         setjson(movies)        
+    getInfo().then(invitado => {
+        // console.info("datos del invitado"+invitado.nombreInvitado); 
+         let Bolvalid = parseInt(invitado.Bol_Validado)
+        // console.log("bolllll :"+Bolvalid) 
+
+        if(invitado.evento1==null){
+         // console.log("entra evento 1 null") 
+          setcar1(true)
+        }  
+        if(invitado.evento2==null){
+         // console.log("entra evento 2 null") 
+          setcar2(true)
+        }  
+        if(invitado.evento3==null){
+         // console.log("entra evento 3 null") 
+          setcar3(true)
+        }
+         if(Bolvalid==1 ){
+        //  console.log("entra 1") 
+           setcar1(true) 
+         }
+         if(Bolvalid==2 ){  
+          //console.log("entra 2")  
+           setcar1(true)
+           setcar2(true)
+         }
+         if(Bolvalid==3 ){          
+          //console.log("entra 3") 
+           setcar1(true)
+           setcar2(true)
+           setcar3(true)
+         }
+         setjson(invitado)        
          showAlert()
     });
-            // console.info( "QR leido: "+e.data)
-            //   fetch('http://syscontrol.azurewebsites.net/FLH/asistencia?QR=' + e.data + '')
-            //   .then(Response => Response.json())  
-            //   .then(data =>  setjson(data))      
-            //   .catch(error => console.error('Error:', error))
-            
-        // validamos si data que esta en la variable json es null
-        if(json.Txt_QR != null){
-          console.log("información :"+json.nombreInvitado)
-         // setnomInfo(json.nombreInvitado)
-          showAlert()
-          setDatoqr(null);
-          
-        }
+           
   }//cierre de metodo
 
   
-  const [count, setCount] = useState(0);
-  const onPress = () => setCount(prevCount => prevCount + 1);
+ //ACTIVA LA FUNCION DE ACTIVAR O CANCELAR ENTRADA
+  const onPress2 = (qr,dia,evento) =>{
+    setalert2(true)
+    setdiavalid(dia);
+    setqrvalid(qr);
+    seteventvalid(evento);
+    //console.info("click en entrada: "+ qr,dia,evento);
+    
+  } 
+ // ENVIA QUE ENTRADA SE ESTA CONFRIMANDO 
+  const valid = (qr,dia) =>{
+   
+        console.info("peticion yes: "+ qr,dia);
+        async function getconfirm() {
+          var url ='http://syscontrol.azurewebsites.net/FLH/confirmarEntrada?QR='+qr+'&dia='+dia+'';
+         // console.info("mi url : "+url)
+          const response = await fetch(url);
+          const enviado = await response.json();
+          //console.info("datos del invitado: "+enviado); 
+          return enviado;
+        }
+        
+        getconfirm().then(enviado => {
+             //console.info("datos del invitado2: "+enviado.Bol_Validado); 
+             hideAlert2()
+             onclose()
+        });
+    
+  } 
 const onclose=()=>{
- 
   setjson('')
-  setnomInfo('')
   setModalVisible(!modalVisible);
+  setcar1(false)
+  setcar2(false)
+  setcar3(false)
 
 }
 
   return (
     <>
      <QRCodeScanner
-        containerStyle={{backgroundColor: '#38006b'}}
+        containerStyle={{backgroundColor: '#CB910C'}}
         onRead={alerta}
         reactivate={true}
         reactivateTimeout={5000}
@@ -92,8 +154,7 @@ const onclose=()=>{
         >          
         </QRCodeScanner>
        
-    <View>
-       
+    <View>     
       <AwesomeAlert 
         show={alert}
         showProgress={true}
@@ -110,11 +171,11 @@ const onclose=()=>{
           setModalVisible(true);
         }}
       />
-      {/* <AwesomeAlert  
-        show={true}
+     <AwesomeAlert  
+        show={alert1}
         showProgress={true}
-        title="DINNER & DRINKS" 
-        message="Por favor, validar la entrada del evento." 
+        title="CONFIRMAR ENTRADA"
+        message={eventvalida}
         closeOnTouchOutside={true}
         closeOnHardwareBackPress={false}
         showCancelButton={true}
@@ -123,23 +184,29 @@ const onclose=()=>{
         cancelText="CANCELAR"
         confirmButtonColor="green"
         cancelButtonColor="red"
-        onConfirmPressed={() => {
-          hideAlert();
-          setModalVisible(true);
+        onConfirmPressed={() => {       
+          valid(qrvalid,diavalid);
         }}
-      /> */}
+        onCancelPressed={() => {
+        
+          hideAlert2();
+        }}
+      /> 
       <Modal animationType="slide" transparent={false} visible={modalVisible}>
      
         <ScrollView>
-          <Text style={styles.titulo}>Entrada de evento {count} </Text>          
-          <TouchableOpacity style={styles.viewcard1} onPress={onPress} disabled={false}  >          
-                <View style={styles.viewcardcontent}> 
-                <Text style={styles.tituloCard}>Invitado:</Text> 
-                <Text style={styles.texto}> {json.nombreInvitado}  </Text> 
-                <Text style={styles.tituloCard}>Acompañante:</Text> 
-                <Text style={styles.texto}>{json.NombreAcompanante}  </Text> 
+          <Text style={styles.titulo}>Entrada de evento </Text>          
+          <TouchableOpacity style={styles.viewcard1}  onPress={() => { onPress2(json.Txt_QR,1,json.evento1) }} disabled={car1}  >          
+                <View style={styles.viewcardcontent}>  
+                 {json.evento1==null ? <Text style={styles.usado}>SIN PASE {"\n"}DE {"\n"}ENTRADA</Text>: json.Bol_Validado == 1 || json.Bol_Validado == 2 || json.Bol_Validado == 3 ? <Text style={styles.usado}>ENTRADA {"\n"}USADA</Text>: <Text style={styles.tituloCard}></Text> }     
+               
+                {json.evento1==null || json.Bol_Validado == 1 || json.Bol_Validado == 2 || json.Bol_Validado == 3 ? null: <Text style={styles.tituloCard}>Invitado:</Text> }
+                {json.evento1==null || json.Bol_Validado == 1 || json.Bol_Validado == 2 || json.Bol_Validado == 3 ? null: <Text style={styles.texto}> {json.nombreInvitado}  </Text>  }               
+                {json.evento1==null || json.Bol_Validado == 1 || json.Bol_Validado == 2 || json.Bol_Validado == 3 ?  null: <Text style={styles.tituloCard}>Acompañante:</Text>   }               
+                {json.evento1==null || json.Bol_Validado == 1 || json.Bol_Validado == 2 || json.Bol_Validado == 3 ?  null: <Text style={styles.texto}>{json.NombreAcompanante} </Text>   }
                 <Text style={styles.texto}>{"\n"}25 de junio 2021</Text>                   
                 </View>
+
                 <View style={styles.viewcardcontent2}> 
                 <Text style={styles.evento}>DINNER & DRINKS</Text>
                 <Image style={styles.Logo}
@@ -149,13 +216,15 @@ const onclose=()=>{
             />
              </View> 
           </TouchableOpacity>
-          <TouchableOpacity style={styles.viewcard2} disabled={true}  >          
-                <View style={styles.viewcardcontent}> 
-                <Text style={styles.tituloCard}>Invitado:</Text> 
-                <Text style={styles.texto}>{json.nombreInvitado}  </Text> 
-                <Text style={styles.tituloCard}>Acompañante:</Text> 
-                <Text style={styles.texto}> {json.NombreAcompanante}  </Text> 
-                <Text style={styles.texto}>{"\n"}26 de junio 2021</Text>                   
+          <TouchableOpacity style={styles.viewcard2}  onPress={() => { onPress2(json.Txt_QR,2,json.evento2) }} disabled={car2}  >          
+          <View style={styles.viewcardcontent}>  
+                 {json.evento2==null ? <Text style={styles.usado}>SIN PASE {"\n"}DE {"\n"}ENTRADA</Text>: json.Bol_Validado == 2 || json.Bol_Validado == 3 ? <Text style={styles.usado}>ENTRADA {"\n"}USADA</Text>: <Text style={styles.tituloCard}></Text> }     
+               
+                {json.evento2==null || json.Bol_Validado == 2 || json.Bol_Validado == 3 ? null: <Text style={styles.tituloCard}>Invitado:</Text> }
+                {json.evento2==null || json.Bol_Validado == 2 || json.Bol_Validado == 3 ? null: <Text style={styles.texto}> {json.nombreInvitado}  </Text>  }               
+                {json.evento2==null || json.Bol_Validado == 2 || json.Bol_Validado == 3 ?  null: <Text style={styles.tituloCard}>Acompañante:</Text>   }               
+                {json.evento2==null || json.Bol_Validado == 2 || json.Bol_Validado == 3 ?  null: <Text style={styles.texto}>{json.NombreAcompanante} </Text>   }
+                <Text style={styles.texto}>{"\n"}25 de junio 2021</Text>                   
                 </View>
                 <View style={styles.viewcardcontent2}> 
                 <Text style={styles.evento}>BRUNCH</Text>
@@ -166,13 +235,15 @@ const onclose=()=>{
             />
              </View> 
           </TouchableOpacity>
-          <TouchableOpacity style={styles.viewcard3} disabled={true} >          
-                <View style={styles.viewcardcontent}> 
-                <Text style={styles.tituloCard}>Invitado:</Text> 
-                <Text style={styles.texto}> {json.nombreInvitado}  </Text> 
-                <Text style={styles.tituloCard}>Acompañante:</Text> 
-                <Text style={styles.texto}> {json.NombreAcompanante}  </Text> 
-                <Text style={styles.texto}>{"\n"}27 de junio 2021</Text>                   
+          <TouchableOpacity style={styles.viewcard3} onPress={() => { onPress2(json.Txt_QR,3,json.evento3) }} disabled={car3} >          
+          <View style={styles.viewcardcontent}>  
+                 {json.evento3==null ? <Text style={styles.usado}>SIN PASE {"\n"}DE {"\n"}ENTRADA</Text>: json.Bol_Validado == 3 ? <Text style={styles.usado}>ENTRADA {"\n"}USADA</Text>: <Text style={styles.tituloCard}></Text> }     
+               
+                {json.evento3==null || json.Bol_Validado == 3 || json.Bol_Validado == 3 ? null: <Text style={styles.tituloCard}>Invitado:</Text> }
+                {json.evento3==null || json.Bol_Validado == 3 || json.Bol_Validado == 3 ? null: <Text style={styles.texto}> {json.nombreInvitado}  </Text>  }               
+                {json.evento3==null || json.Bol_Validado == 3 || json.Bol_Validado == 3 ?  null: <Text style={styles.tituloCard}>Acompañante:</Text>   }               
+                {json.evento3==null || json.Bol_Validado == 3 || json.Bol_Validado == 3 ?  null: <Text style={styles.texto}>{json.NombreAcompanante} </Text>   }
+                <Text style={styles.texto}>{"\n"}25 de junio 2021</Text>                   
                 </View>
                 <View style={styles.viewcardcontent2}> 
                 <Text style={styles.evento}>ZAMNA</Text>
@@ -203,6 +274,13 @@ const onclose=()=>{
     fontSize: 18,
     padding: 32,
     color: '#777'
+  },
+  usado:{
+    fontSize: 22,
+    padding: 18,
+    fontWeight:'bold',
+    textAlign:'center',
+    color:'#FFFFFF', 
   },
    titulo:{
      textAlign:'center',
