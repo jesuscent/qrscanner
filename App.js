@@ -48,6 +48,7 @@ function App() {
    
     //console.info( "QR leido: "+e.data)
     async function getInfo() {
+      console.error(e.data);
       const response = await fetch('http://syscontrol.azurewebsites.net/FLH/asistencia?QR=' + e.data + '');
       const invitado = await response.json();
       return invitado;
