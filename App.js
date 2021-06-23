@@ -1,16 +1,18 @@
 
-import React from "react";
-import {useState} from 'react';
-import QRCodeScanner from 'react-native-qrcode-scanner'
-import { Text,Image,ActivityIndicator, ImageBackground,Linking,StyleSheet,Separator,
+import * as React from 'react';
+ import {useState} from 'react';
+ import QRCodeScanner from 'react-native-qrcode-scanner'
+ import { Text,Image,ActivityIndicator, ImageBackground,Linking,StyleSheet,Separator,
    TouchableOpacity, Alert, TouchableHighlight , View, Modal, Button,TextInput ,Pressable, ScrollView} from 'react-native';
    import axios from 'axios';
-import AwesomeAlert from 'react-native-awesome-alerts';
-
-import { Colors,  DebugInstructions,  Header,  LearnMoreLinks,  ReloadInstructions,} from 'react-native/Libraries/NewAppScreen';
-
-
-function App() {
+   import AwesomeAlert from 'react-native-awesome-alerts';
+ import { Colors,  DebugInstructions,  Header,  LearnMoreLinks,  ReloadInstructions,} from 'react-native/Libraries/NewAppScreen';
+ import { NavigationContainer } from '@react-navigation/native';
+ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+ import QR from './Qr'
+ import BuscarPorNombre from './BuscarPorNombre'
+ import { enableScreens } from 'react-native-screens';
+ function App() {
 
   const [alert, setalert] = useState(false);
   const [alert1, setalert2] = useState(false);
@@ -131,159 +133,44 @@ const onclose=()=>{
   setcar3(false)
   setText("")
 }
+const Tab = createBottomTabNavigator();
+   return (
+    
+    // <>
+    //     <QRCodeScanner
+    //     containerStyle={{backgroundColor: '#CB910C'}}
+    //     onRead={alerta}
+    //     reactivate={true}
+    //     reactivateTimeout={5000}
+    //     permissionDialogMessage="¿Puedo usar tu camara?"
+    //     showMarker={true}
+    //     markerStyle={{borderColor: 'green', borderRadius: 10}}   
+    //     topContent={          
+    //         <Text style={styles.tituloqr}>FBX40 </Text>
+    //     }    
+    //     bottomContent={
+    //       <TouchableOpacity>
+    //         <Text style={styles.qrfooter}>
+    //           Buscando...
+    //         </Text>
+    //         <ActivityIndicator size="large"  color="#00ff00" />
+    //       </TouchableOpacity>
+    //     }       
+    //     >          
+    //     </QRCodeScanner>   
 
-  return (
-    <>
-     <View style={styles.container}>
-     <TextInput
-       style={styles.inputsearch}
-        value={text}
-        placeholder="BUSCAR POR NOMBRE"
-        keyboardType="numeric"
-        onChangeText={(text) => setText(text)}
-      />
-    <TouchableOpacity style={styles.btnsearch} onPress={() => alerta()} >
-          <Text style={styles.texto}>
-              BUSCAR INVITADO
-              </Text> 
-          </TouchableOpacity>
-     </View>
-  
-     {/* <QRCodeScanner
-        containerStyle={{backgroundColor: '#CB910C'}}
-        onRead={alerta}
-        reactivate={true}
-        reactivateTimeout={5000}
-        permissionDialogMessage="¿Puedo usar tu camara?"
-        showMarker={true}
-        markerStyle={{borderColor: 'green', borderRadius: 10}}   
-        topContent={          
-            <Text style={styles.tituloqr}>FBX40 </Text>
-        }    
-        bottomContent={
-          <TouchableOpacity>
-            <Text style={styles.qrfooter}>
-              Buscando...
-            </Text>
-            <ActivityIndicator size="large"  color="#00ff00" />
-          </TouchableOpacity>
-        }       
-        >          
-        </QRCodeScanner>
-        */}
-    <View>     
-      <AwesomeAlert 
-        show={alert}
-        showProgress={true}
-        title="INVITADO ENCOTRADO"
-        message={json.nombreInvitado}
-        closeOnTouchOutside={true}
-        closeOnHardwareBackPress={false}
-        showCancelButton={false}
-        showConfirmButton={true}
-        confirmText="VERIFICAR ENTRADA"
-        confirmButtonColor="#DD6B55"
-        onConfirmPressed={() => {
-          hideAlert();
-          setModalVisible(true);
-        }}
-      />
-     <AwesomeAlert  
-        show={alert1}
-        showProgress={true}
-        title="CONFIRMAR ENTRADA"
-        message={eventvalida}
-        closeOnTouchOutside={true}
-        closeOnHardwareBackPress={false}
-        showCancelButton={true}
-        showConfirmButton={true}
-        confirmText="VALIDAR"
-        cancelText="CANCELAR"
-        confirmButtonColor="green"
-        cancelButtonColor="red"
-        onConfirmPressed={() => {       
-          valid(qrvalid,diavalid);
-        }}
-        onCancelPressed={() => {
-        
-          hideAlert2();
-        }}
-      /> 
-      <Modal animationType="slide" transparent={false} visible={modalVisible}>
-     
-        <ScrollView>
-          <Text style={styles.titulo}>Entrada de evento </Text>          
-          <TouchableOpacity style={styles.viewcard1}  onPress={() => { onPress2(json.Txt_QR,1,json.evento1) }} disabled={car1}  >          
-                <View style={styles.viewcardcontent}>  
-                 {json.evento1==null ? <Text style={styles.usado}>SIN PASE {"\n"}DE {"\n"}ENTRADA</Text>: json.Bol_Validado == 1 || json.Bol_Validado == 2 || json.Bol_Validado == 3 ? <Text style={styles.usado}>ENTRADA {"\n"}USADA</Text>: <Text style={styles.tituloCard}></Text> }     
-               
-                {json.evento1==null || json.Bol_Validado == 1 || json.Bol_Validado == 2 || json.Bol_Validado == 3 ? null: <Text style={styles.tituloCard}>Invitado:</Text> }
-                {json.evento1==null || json.Bol_Validado == 1 || json.Bol_Validado == 2 || json.Bol_Validado == 3 ? null: <Text style={styles.texto}> {json.nombreInvitado}  </Text>  }               
-                {json.evento1==null || json.Bol_Validado == 1 || json.Bol_Validado == 2 || json.Bol_Validado == 3 ?  null: <Text style={styles.tituloCard}>Acompañante:</Text>   }               
-                {json.evento1==null || json.Bol_Validado == 1 || json.Bol_Validado == 2 || json.Bol_Validado == 3 ?  null: <Text style={styles.texto}>{json.NombreAcompanante} </Text>   }
-                <Text style={styles.texto}>{"\n"}25 de junio 2021</Text>                   
-                </View>
 
-                <View style={styles.viewcardcontent2}> 
-                <Text style={styles.evento}>DINNER & DRINKS</Text>
-                <Image style={styles.Logo}
-              source={{
-                uri:('https://fbx40.azurewebsites.net/static/media/ftlogo.9e8078a5.png')
-              }}
-            />
-             </View> 
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.viewcard2}  onPress={() => { onPress2(json.Txt_QR,2,json.evento2) }} disabled={car2}  >          
-          <View style={styles.viewcardcontent}>  
-                 {json.evento2==null ? <Text style={styles.usado}>SIN PASE {"\n"}DE {"\n"}ENTRADA</Text>: json.Bol_Validado == 2 || json.Bol_Validado == 3 ? <Text style={styles.usado}>ENTRADA {"\n"}USADA</Text>: <Text style={styles.tituloCard}></Text> }     
-               
-                {json.evento2==null || json.Bol_Validado == 2 || json.Bol_Validado == 3 ? null: <Text style={styles.tituloCard}>Invitado:</Text> }
-                {json.evento2==null || json.Bol_Validado == 2 || json.Bol_Validado == 3 ? null: <Text style={styles.texto}> {json.nombreInvitado}  </Text>  }               
-                {json.evento2==null || json.Bol_Validado == 2 || json.Bol_Validado == 3 ?  null: <Text style={styles.tituloCard}>Acompañante:</Text>   }               
-                {json.evento2==null || json.Bol_Validado == 2 || json.Bol_Validado == 3 ?  null: <Text style={styles.texto}>{json.NombreAcompanante} </Text>   }
-                <Text style={styles.texto}>{"\n"}25 de junio 2021</Text>                   
-                </View>
-                <View style={styles.viewcardcontent2}> 
-                <Text style={styles.evento}>BRUNCH</Text>
-                <Image style={styles.Logo}
-              source={{
-                uri:('https://fbx40.azurewebsites.net/static/media/ftlogo.9e8078a5.png')
-              }}
-            />
-             </View> 
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.viewcard3} onPress={() => { onPress2(json.Txt_QR,3,json.evento3) }} disabled={car3} >          
-          <View style={styles.viewcardcontent}>  
-                 {json.evento3==null ? <Text style={styles.usado}>SIN PASE {"\n"}DE {"\n"}ENTRADA</Text>: json.Bol_Validado == 3 ? <Text style={styles.usado}>ENTRADA {"\n"}USADA</Text>: <Text style={styles.tituloCard}></Text> }     
-               
-                {json.evento3==null || json.Bol_Validado == 3 || json.Bol_Validado == 3 ? null: <Text style={styles.tituloCard}>Invitado:</Text> }
-                {json.evento3==null || json.Bol_Validado == 3 || json.Bol_Validado == 3 ? null: <Text style={styles.texto}> {json.nombreInvitado}  </Text>  }               
-                {json.evento3==null || json.Bol_Validado == 3 || json.Bol_Validado == 3 ?  null: <Text style={styles.tituloCard}>Acompañante:</Text>   }               
-                {json.evento3==null || json.Bol_Validado == 3 || json.Bol_Validado == 3 ?  null: <Text style={styles.texto}>{json.NombreAcompanante} </Text>   }
-                <Text style={styles.texto}>{"\n"}25 de junio 2021</Text>                   
-                </View>
-                <View style={styles.viewcardcontent2}> 
-                <Text style={styles.evento}>ZAMNA</Text>
-                <Image style={styles.Logo}
-              source={{
-                uri:('https://fbx40.azurewebsites.net/static/media/ftlogo.9e8078a5.png')
-              }}
-            />
-             </View> 
-          </TouchableOpacity>
-          
-          <TouchableOpacity style={styles.btn} onPress={() => onclose()} >
-          <Text style={styles.texto}>
-          ESCANEAR NUEVO INVITADO
-              </Text> 
-          </TouchableOpacity>
-        </ScrollView>
-      </Modal>
-    </View>
-    </>
-  );
+    // </>
+    <NavigationContainer>
+    <Tab.Navigator>
+      <Tab.Screen name="Home" component={QR} />
+      <Tab.Screen name="BuscarPorNombre" component={BuscarPorNombre} />
+      
+    </Tab.Navigator>
+  </NavigationContainer>
+   );
 
- }
+  }
 
  const styles = StyleSheet.create({
   centerText: {
@@ -444,4 +331,4 @@ inputsearch:{
 }
 });
 
-export default App;
+ export default App;
