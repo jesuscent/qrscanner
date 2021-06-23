@@ -3,9 +3,8 @@ import React from "react";
 import {useState} from 'react';
 import QRCodeScanner from 'react-native-qrcode-scanner'
 import { Text,Image,ActivityIndicator, ImageBackground,Linking,StyleSheet,Separator,
-   TouchableOpacity, Alert, TouchableHighlight , View, Modal, Button ,Pressable, ScrollView} from 'react-native';
+   TouchableOpacity, Alert, TouchableHighlight , View, Modal, Button,TextInput ,Pressable, ScrollView} from 'react-native';
    import axios from 'axios';
-
 import AwesomeAlert from 'react-native-awesome-alerts';
 
 import { Colors,  DebugInstructions,  Header,  LearnMoreLinks,  ReloadInstructions,} from 'react-native/Libraries/NewAppScreen';
@@ -42,20 +41,21 @@ function App() {
      setalert2(false)
     };
   
-    
+    const [text, setText] = useState("");
 
-  const alerta = e => {
-   
+
+  const alerta = () => {
+    debugger
+        console.info("peticion yes: "+ text);
     //console.info( "QR leido: "+e.data)
     async function getInfo() {
-      console.error(e.data);
-      const response = await fetch('http://syscontrol.azurewebsites.net/FLH/asistencia?QR=' + e.data + '');
+      const response = await fetch('https://syscontrol.azurewebsites.net/FLH/buscarPorNomTel?nombre=' + text + '');
       const invitado = await response.json();
       return invitado;
     }
     
     getInfo().then(invitado => {
-        // console.info("datos del invitado"+invitado.nombreInvitado); 
+       // console.info("datos del invitado"+invitado.nombreInvitado); 
          let Bolvalid = parseInt(invitado.Bol_Validado)
         // console.log("bolllll :"+Bolvalid) 
 
@@ -104,8 +104,9 @@ function App() {
   } 
  // ENVIA QUE ENTRADA SE ESTA CONFRIMANDO 
   const valid = (qr,dia) =>{
-   
-        console.info("peticion yes: "+ qr,dia);
+   debugger
+
+        console.info("peticion yes: "+ text);
         async function getconfirm() {
           var url ='http://syscontrol.azurewebsites.net/FLH/confirmarEntrada?QR='+qr+'&dia='+dia+'';
          // console.info("mi url : "+url)
@@ -128,12 +129,27 @@ const onclose=()=>{
   setcar1(false)
   setcar2(false)
   setcar3(false)
-
+  setText("")
 }
 
   return (
     <>
-     <QRCodeScanner
+     <View style={styles.container}>
+     <TextInput
+       style={styles.inputsearch}
+        value={text}
+        placeholder="BUSCAR POR NOMBRE"
+        keyboardType="numeric"
+        onChangeText={(text) => setText(text)}
+      />
+    <TouchableOpacity style={styles.btnsearch} onPress={() => alerta()} >
+          <Text style={styles.texto}>
+              BUSCAR INVITADO
+              </Text> 
+          </TouchableOpacity>
+     </View>
+  
+     {/* <QRCodeScanner
         containerStyle={{backgroundColor: '#CB910C'}}
         onRead={alerta}
         reactivate={true}
@@ -154,7 +170,7 @@ const onclose=()=>{
         }       
         >          
         </QRCodeScanner>
-       
+        */}
     <View>     
       <AwesomeAlert 
         show={alert}
@@ -395,7 +411,37 @@ paddingBottom:80
    fontSize:30,
    color:'white',
    paddingTop:50,
- }
+ },
+ btnsearch:{
+  justifyContent: 'center',
+  marginHorizontal: 50,
+  margin:25,
+  backgroundColor: '#0277bd',
+  shadowColor: '#a5e1ad',
+  shadowOffset: { width: 5, height: 6 },
+  shadowRadius: 4,
+  shadowOpacity: 0.26,
+  elevation: 8,
+  borderRadius:50,
+  width: '70%',
+  height: 50,
+  textAlign:'center',
+ },container: {
+  flex: 1,
+  justifyContent: "center",
+  paddingHorizontal: 10
+},
+inputsearch:{
+  justifyContent: "center",
+  textAlign:'center',
+  elevation: 2,
+  borderRadius:10,
+  shadowColor:  '#0662F8',
+  height:69,
+  color:'black',
+  fontSize:15,
+  alignContent:'center',
+}
 });
 
 export default App;
