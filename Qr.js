@@ -227,7 +227,7 @@ const onclose=()=>{
                 </View>
 
                 <View style={styles.viewcardcontent2}> 
-                <Text style={styles.evento}>DINNER & DRINKS</Text>
+                <Text style={styles.evento}>ILIOS CANCÚN</Text>
                 <Image style={styles.Logo}
               source={{
                 uri:('https://fbx40.azurewebsites.net/static/media/ftlogo.9e8078a5.png')
@@ -246,7 +246,7 @@ const onclose=()=>{
                 <Text style={styles.texto}>{"\n"}25 de junio 2021</Text>                   
                 </View>
                 <View style={styles.viewcardcontent2}> 
-                <Text style={styles.evento}>BRUNCH</Text>
+                <Text style={styles.evento}>MARBELLA</Text>
                 <Image style={styles.Logo}
               source={{
                 uri:('https://fbx40.azurewebsites.net/static/media/ftlogo.9e8078a5.png')
@@ -265,7 +265,7 @@ const onclose=()=>{
                 <Text style={styles.texto}>{"\n"}25 de junio 2021</Text>                   
                 </View>
                 <View style={styles.viewcardcontent2}> 
-                <Text style={styles.evento}>ZAMNA</Text>
+                <Text style={styles.evento}>AFTER PARTY</Text>
                 <Image style={styles.Logo}
               source={{
                 uri:('https://fbx40.azurewebsites.net/static/media/ftlogo.9e8078a5.png')
