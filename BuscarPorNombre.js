@@ -409,16 +409,18 @@ paddingBottom:80
  },container: {
   flex: 1,
   justifyContent: "center",
-  paddingHorizontal: 10
+  paddingHorizontal: 10,
+  backgroundColor: '#CB910C'
 },
 inputsearch:{
   justifyContent: "center",
   textAlign:'center',
   elevation: 2,
   borderRadius:10,
-  shadowColor:  '#0662F8',
+  shadowColor:  'white',
   height:69,
   color:'black',
+  backgroundColor:'white',
   fontSize:15,
   alignContent:'center',
 }

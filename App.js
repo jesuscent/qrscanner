@@ -7,10 +7,11 @@ import * as React from 'react';
    import axios from 'axios';
    import AwesomeAlert from 'react-native-awesome-alerts';
  import { Colors,  DebugInstructions,  Header,  LearnMoreLinks,  ReloadInstructions,} from 'react-native/Libraries/NewAppScreen';
- import { NavigationContainer } from '@react-navigation/native';
+ import { NavigationContainer ,DefaultTheme} from '@react-navigation/native';
  import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
  import QR from './Qr'
  import BuscarPorNombre from './BuscarPorNombre'
+ import Lista from './Lista'
  import { enableScreens } from 'react-native-screens';
  function App() {
 
@@ -47,7 +48,7 @@ import * as React from 'react';
 
 
   const alerta = () => {
-    debugger
+    
         console.info("peticion yes: "+ text);
     //console.info( "QR leido: "+e.data)
     async function getInfo() {
@@ -134,38 +135,84 @@ const onclose=()=>{
   setText("")
 }
 const Tab = createBottomTabNavigator();
+
+
    return (
     
-    // <>
-    //     <QRCodeScanner
-    //     containerStyle={{backgroundColor: '#CB910C'}}
-    //     onRead={alerta}
-    //     reactivate={true}
-    //     reactivateTimeout={5000}
-    //     permissionDialogMessage="¿Puedo usar tu camara?"
-    //     showMarker={true}
-    //     markerStyle={{borderColor: 'green', borderRadius: 10}}   
-    //     topContent={          
-    //         <Text style={styles.tituloqr}>FBX40 </Text>
-    //     }    
-    //     bottomContent={
-    //       <TouchableOpacity>
-    //         <Text style={styles.qrfooter}>
-    //           Buscando...
-    //         </Text>
-    //         <ActivityIndicator size="large"  color="#00ff00" />
-    //       </TouchableOpacity>
-    //     }       
-    //     >          
-    //     </QRCodeScanner>   
-
-
-    // </>
     <NavigationContainer>
-    <Tab.Navigator>
-      <Tab.Screen name="Home" component={QR} />
-      <Tab.Screen name="BuscarPorNombre" component={BuscarPorNombre} />
+    <Tab.Navigator
+    tabBarOptions={{
+      showLabel:false,
+      style:{
+        position: 'absolute',
+        bottom:8,
+        left:5,
+        right:5,
+        elevation:0,
+        borderRadius:15,
+        height: 90,
+        backgroundColor:'#ffff',
+        ...styles.shadow
+
+      }
+    }}
+    >
+      <Tab.Screen name="Home" component={QR} 
+        options={{
+          tabBarIcon:({focused})=>(
+            <View style={{alignItems:'center',justifyContent:'center',top:10}}>
+            <Image
+              source={require('./assets/qrcode.png')}
+              resizeMode="contain"
+              style={{
+                width: 30,
+                height: 30,
+                tintColor:focused ? '#e32f45':'#748c94',
+              }}
+            />
+              <Text>QR</Text>
+            </View>
+          ),
+        }}
+      />
+      <Tab.Screen name="BuscarPorNombre" component={BuscarPorNombre} 
       
+      options={{
+        tabBarIcon:({focused})=>(
+          <View style={{alignItems:'center',justifyContent:'center',top:10}}>
+           <Image
+              source={require('./assets/search.png')}
+              resizeMode="contain"
+              style={{
+                width: 30,
+                height: 30,
+                tintColor:focused ? '#e32f45':'#748c94',
+              }}
+            />
+            <Text>BUSCAR</Text>
+          </View>
+        ),
+      }}
+      />
+       <Tab.Screen name="Lista" component={Lista} 
+      
+      options={{
+        tabBarIcon:({focused})=>(
+          <View style={{alignItems:'center',justifyContent:'center',top:10}}>
+            <Image
+              source={require('./assets/list.png')}
+              resizeMode="contain"
+              style={{
+                width: 30,
+                height: 30,
+                tintColor:focused ? '#e32f45':'#748c94',
+              }}
+            />
+            <Text>LISTA</Text>
+          </View>
+        ),
+      }}
+      />
     </Tab.Navigator>
   </NavigationContainer>
    );
@@ -173,6 +220,16 @@ const Tab = createBottomTabNavigator();
   }
 
  const styles = StyleSheet.create({
+   shadow:{
+    shadowColor:'red',
+    shadowOffset:{
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity:0.1,
+    shadowRadius:1.5,
+    elevation:2
+   },
   centerText: {
     flex: 1,
     fontSize: 18,

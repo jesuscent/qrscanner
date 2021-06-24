@@ -1,5 +1,5 @@
-import React from "react";
-import {useState,useEffect} from 'react';
+import React from 'react'
+import {useState} from 'react';
 import QRCodeScanner from 'react-native-qrcode-scanner'
 import { Text,Image,ActivityIndicator, ImageBackground,Linking,StyleSheet,Separator,
    TouchableOpacity, Alert, TouchableHighlight , View, Modal, Button,TextInput ,Pressable, ScrollView} from 'react-native';
@@ -9,7 +9,7 @@ import AwesomeAlert from 'react-native-awesome-alerts';
 import { Colors,  DebugInstructions,  Header,  LearnMoreLinks,  ReloadInstructions,} from 'react-native/Libraries/NewAppScreen';
 
 
-function Qr() {
+function Lista() {
 
   const [alert, setalert] = useState(false);
   const [alert1, setalert2] = useState(false);
@@ -31,7 +31,6 @@ function Qr() {
  
  const hideAlert = () => {
    setalert(false)
-  
   };
   const showAlert2 = () => {
     setalert(true)
@@ -42,30 +41,20 @@ function Qr() {
     };
   
     const [text, setText] = useState("");
-    const [qrser, setqrser] = useState(false);
 
-// useEffect(()=>{
 
-//   if(qrser){ 
-//     setqrser(true)
-//     console.log("is cambio "+qrser)
-//   }
-  
-// })
-  
-  const alerta = e => {
-console.info("activo "+qrser)
-   
-   
-    async function getInfo() {
-      const response = await fetch('http://syscontrol.azurewebsites.net/FLH/asistencia?QR=' + e.data + '');
-      const invitado = await response.json();
-      setqrser(false)
-      return invitado;
-    }
+  const alerta = () => {
+    
+     if(text !=""){
+      async function getInfo() {
+        const response = await fetch('https://syscontrol.azurewebsites.net/FLH/buscarPorNomTel?nombre=' + text + '');
+        const invitado = await response.json();
+        return invitado;
+      }
+    
+    
     
     getInfo().then(invitado => {
-      
        // console.info("datos del invitado"+invitado.nombreInvitado); 
          let Bolvalid = parseInt(invitado.Bol_Validado)
         // console.log("bolllll :"+Bolvalid) 
@@ -100,9 +89,10 @@ console.info("activo "+qrser)
          setjson(invitado)        
          showAlert()
     });
-           
-  }
- 
+  }    
+  }//cierre de metodo
+
+  
  //ACTIVA LA FUNCION DE ACTIVAR O CANCELAR ENTRADA
   const onPress2 = (qr,dia,evento) =>{
     setalert2(true)
@@ -135,43 +125,33 @@ console.info("activo "+qrser)
   } 
 const onclose=()=>{
   setjson('')
+  setText('')
   setModalVisible(!modalVisible);
   setcar1(false)
   setcar2(false)
   setcar3(false)
-  setText("")
-  setqrser(true)
-  
-  console.log("se cieraa"+ qrser)
- 
+
 }
 
   return (
     <>
-    <View style={styles.conte}>   
-   
-        <QRCodeScanner
-        containerStyle={{ paddingTop: 10,backgroundColor: '#CB910C'}}
-        onRead={alerta}
-        reactivate={true}
-        reactivateTimeout={5000}
-        permissionDialogMessage="¿Puedo usar tu camara?"
-        showMarker={true}
-        markerStyle={{borderColor: 'green', borderRadius: 10 ,paddingTop: 60} }   
-        topContent={          
-          <Text style={styles.tituloqr}>FBX40 </Text>
-        }    
-        // bottomContent={
-        //   <TouchableOpacity>
-        //     <Text style={styles.qrfooter}>
-        //       Buscando...
-        //     </Text>
-        //     <ActivityIndicator size="large"  color="#00ff00" />
-        //   </TouchableOpacity>
-        // }       
-        >          
-        </QRCodeScanner>   
-        </View>
+     <View style={styles.container}>
+     <TextInput
+       style={styles.inputsearch}
+        value={text}
+        required
+        placeholder="BUSCAR POR NOMBRE"
+        keyboardType="default"
+        onChangeText={(text) => setText(text)}
+      />
+    <TouchableOpacity style={styles.btnsearch} onPress={() => alerta()} >
+          <Text style={styles.texto}>
+              BUSCAR INVITADO
+              </Text> 
+          </TouchableOpacity>
+     </View> 
+  
+    <View>     
       <AwesomeAlert 
         show={alert}
         showProgress={true}
@@ -188,7 +168,6 @@ const onclose=()=>{
           setModalVisible(true);
         }}
       />
-      
      <AwesomeAlert  
         show={alert1}
         showProgress={true}
@@ -210,7 +189,6 @@ const onclose=()=>{
           hideAlert2();
         }}
       /> 
-     
       <Modal animationType="slide" transparent={false} visible={modalVisible}>
      
         <ScrollView>
@@ -276,21 +254,18 @@ const onclose=()=>{
           
           <TouchableOpacity style={styles.btn} onPress={() => onclose()} >
           <Text style={styles.texto}>
-          ESCANEAR NUEVO INVITADO
+          BUSCAR NUEVO INVITADO
               </Text> 
           </TouchableOpacity>
         </ScrollView>
       </Modal>
-   
+    </View>
     </>
   );
 
  }
 
  const styles = StyleSheet.create({
-  conte:{
-    flex: 1,
-  },
   centerText: {
     flex: 1,
     fontSize: 18,
@@ -409,12 +384,13 @@ const onclose=()=>{
  },
  tituloqr:{
 color:'white',
-fontSize:50,
+fontSize:69,
 paddingBottom:80
  },
  qrfooter:{
    fontSize:30,
    color:'white',
+   paddingTop:50,
  },
  btnsearch:{
   justifyContent: 'center',
@@ -447,5 +423,4 @@ inputsearch:{
   alignContent:'center',
 }
 });
-
-export default Qr;
+ export default Lista;
