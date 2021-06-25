@@ -58,9 +58,9 @@ console.info("activo "+qrser)
    
    
     async function getInfo() {
-      const response = await fetch('http://syscontrol.azurewebsites.net/FLH/asistencia?QR=' + e.data + '');
+      const response = await fetch('https://syscontrol.azurewebsites.net/FLH/asistencia?QR=' + e.data + '');
       const invitado = await response.json();
-      setqrser(false)
+     
       return invitado;
     }
     
@@ -118,7 +118,7 @@ console.info("activo "+qrser)
 
         console.info("peticion yes: "+ text);
         async function getconfirm() {
-          var url ='http://syscontrol.azurewebsites.net/FLH/confirmarEntrada?QR='+qr+'&dia='+dia+'';
+          var url ='https://syscontrol.azurewebsites.net/FLH/confirmarEntrada?QR='+qr+'&dia='+dia+'';
          // console.info("mi url : "+url)
           const response = await fetch(url);
           const enviado = await response.json();
@@ -215,7 +215,7 @@ const onclose=()=>{
      
         <ScrollView>
           <Text style={styles.titulo}>Entrada de evento </Text>          
-          <TouchableOpacity style={styles.viewcard1}  onPress={() => { onPress2(json.Txt_QR,1,json.evento1) }} disabled={car1}  >          
+          {/* <TouchableOpacity style={styles.viewcard1}  onPress={() => { onPress2(json.Txt_QR,1,json.evento1) }} disabled={car1}  >          
                 <View style={styles.viewcardcontent}>  
                  {json.evento1==null ? <Text style={styles.usado}>SIN PASE {"\n"}DE {"\n"}ENTRADA</Text>: json.Bol_Validado == 1 || json.Bol_Validado == 2 || json.Bol_Validado == 3 ? <Text style={styles.usado}>ENTRADA {"\n"}USADA</Text>: <Text style={styles.tituloCard}></Text> }     
                
@@ -234,7 +234,7 @@ const onclose=()=>{
               }}
             />
              </View> 
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           <TouchableOpacity style={styles.viewcard2}  onPress={() => { onPress2(json.Txt_QR,2,json.evento2) }} disabled={car2}  >          
           <View style={styles.viewcardcontent}>  
                  {json.evento2==null ? <Text style={styles.usado}>SIN PASE {"\n"}DE {"\n"}ENTRADA</Text>: json.Bol_Validado == 2 || json.Bol_Validado == 3 ? <Text style={styles.usado}>ENTRADA {"\n"}USADA</Text>: <Text style={styles.tituloCard}></Text> }     

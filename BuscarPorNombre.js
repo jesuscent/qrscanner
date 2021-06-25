@@ -31,6 +31,7 @@ function BuscarPorNombre() {
  
  const hideAlert = () => {
    setalert(false)
+   setText('')
   };
   const showAlert2 = () => {
     setalert(true)
@@ -38,6 +39,7 @@ function BuscarPorNombre() {
    
    const hideAlert2 = () => {
      setalert2(false)
+     setText('')
     };
   
     const [text, setText] = useState("");
@@ -108,7 +110,7 @@ function BuscarPorNombre() {
 
         console.info("peticion yes: "+ text);
         async function getconfirm() {
-          var url ='http://syscontrol.azurewebsites.net/FLH/confirmarEntrada?QR='+qr+'&dia='+dia+'';
+          var url ='https://syscontrol.azurewebsites.net/FLH/confirmarEntrada?QR='+qr+'&dia='+dia+'';
          // console.info("mi url : "+url)
           const response = await fetch(url);
           const enviado = await response.json();
@@ -165,6 +167,7 @@ const onclose=()=>{
         confirmButtonColor="#DD6B55"
         onConfirmPressed={() => {
           hideAlert();
+          setText('')
           setModalVisible(true);
         }}
       />
@@ -193,7 +196,7 @@ const onclose=()=>{
      
         <ScrollView>
           <Text style={styles.titulo}>Entrada de evento </Text>          
-          <TouchableOpacity style={styles.viewcard1}  onPress={() => { onPress2(json.Txt_QR,1,json.evento1) }} disabled={car1}  >          
+          {/* <TouchableOpacity style={styles.viewcard1}  onPress={() => { onPress2(json.Txt_QR,1,json.evento1) }} disabled={car1}  >          
                 <View style={styles.viewcardcontent}>  
                  {json.evento1==null ? <Text style={styles.usado}>SIN PASE {"\n"}DE {"\n"}ENTRADA</Text>: json.Bol_Validado == 1 || json.Bol_Validado == 2 || json.Bol_Validado == 3 ? <Text style={styles.usado}>ENTRADA {"\n"}USADA</Text>: <Text style={styles.tituloCard}></Text> }     
                
@@ -205,14 +208,14 @@ const onclose=()=>{
                 </View>
 
                 <View style={styles.viewcardcontent2}> 
-                <Text style={styles.evento}>DINNER & DRINKS</Text>
+                <Text style={styles.evento}>ILIOS CANCÚN</Text>
                 <Image style={styles.Logo}
               source={{
                 uri:('https://fbx40.azurewebsites.net/static/media/ftlogo.9e8078a5.png')
               }}
             />
              </View> 
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           <TouchableOpacity style={styles.viewcard2}  onPress={() => { onPress2(json.Txt_QR,2,json.evento2) }} disabled={car2}  >          
           <View style={styles.viewcardcontent}>  
                  {json.evento2==null ? <Text style={styles.usado}>SIN PASE {"\n"}DE {"\n"}ENTRADA</Text>: json.Bol_Validado == 2 || json.Bol_Validado == 3 ? <Text style={styles.usado}>ENTRADA {"\n"}USADA</Text>: <Text style={styles.tituloCard}></Text> }     
@@ -224,7 +227,7 @@ const onclose=()=>{
                 <Text style={styles.texto}>{"\n"}25 de junio 2021</Text>                   
                 </View>
                 <View style={styles.viewcardcontent2}> 
-                <Text style={styles.evento}>BRUNCH</Text>
+                <Text style={styles.evento}>MARBELLA</Text>
                 <Image style={styles.Logo}
               source={{
                 uri:('https://fbx40.azurewebsites.net/static/media/ftlogo.9e8078a5.png')
@@ -243,7 +246,7 @@ const onclose=()=>{
                 <Text style={styles.texto}>{"\n"}25 de junio 2021</Text>                   
                 </View>
                 <View style={styles.viewcardcontent2}> 
-                <Text style={styles.evento}>ZAMNA</Text>
+                <Text style={styles.evento}>AFTER PARTY</Text>
                 <Image style={styles.Logo}
               source={{
                 uri:('https://fbx40.azurewebsites.net/static/media/ftlogo.9e8078a5.png')

@@ -1,10 +1,9 @@
-import React from 'react'
+import React, { useEffect } from 'react';
 import {useState} from 'react';
 import QRCodeScanner from 'react-native-qrcode-scanner'
 import { Text,Image,ActivityIndicator, ImageBackground,Linking,StyleSheet,Separator,
    TouchableOpacity, FlatList,Alert, TouchableHighlight , View,SectionList, Modal, Button,TextInput ,Pressable, ScrollView} from 'react-native';
-   import axios from 'axios';
-import AwesomeAlert from 'react-native-awesome-alerts';
+
 import Itemlis from './Itemlis'
 import { Colors,  DebugInstructions,  Header,  LearnMoreLinks,  ReloadInstructions,} from 'react-native/Libraries/NewAppScreen';
 import { color } from 'react-native-reanimated';
@@ -13,21 +12,33 @@ import { color } from 'react-native-reanimated';
 function Lista() {
 
   const [json, setjson] = useState([]);
+  const [count, setCount] = useState(6);
+  const [confirmados, setConfirmados] = useState();
 
 
-      async function getInfo() {
-        const response = await fetch('http://syscontrol.azurewebsites.net/FLH/ListaConfirmado?lista');
-        const lista = await response.json();
-        return lista;
-      }
-      getInfo().then(invitado => {
-        setjson(invitado) 
-        console.log(json); 
-    });
+  const lista = () => {
 
-  
- 
+    async function getInfo() {
+      const response = await fetch('https://syscontrol.azurewebsites.net/FLH/ListaConfirmado?lista');
+      const lista = await response.json();
+      return lista;
+    }
+    getInfo().then(invitado => {
+      setjson(invitado) 
+      console.log(json);       
+      console.log("pasaas"+ invitado.length); 
+      setCount(invitado.length)
+      var cant = invitado.filter(o =>o.Bol_Validado==2).length;
+      setConfirmados(cant);
+      console.log("total confirmado"+ cant); 
+  });
+  }
 
+
+    useEffect(() => {
+      lista()
+
+  },[]);
 
   const DATA = [
     {
@@ -74,8 +85,17 @@ function Lista() {
   <View style={styles.centerText}>
 
   <View style={styles.centerText1}>
-    <Text style={styles.titulo}>LISTA DE INVITADOS</Text>
-    
+    <Text style={styles.titulo}>LISTA DE INVITADOS
+    </Text> 
+    <Text style={styles.intotal}>Invitados Total: {count}</Text>
+    <Text style={styles.intconf}>Checkin: {confirmados}</Text>
+
+    <TouchableOpacity style={styles.btnConsult} onPress={() => lista()}>
+          <Text style={styles.texto}>
+              Consultar 
+              </Text> 
+          </TouchableOpacity>
+
     <FlatList
           data={json}          
           renderItem={({ item }) => <Item items={item} />}
@@ -87,6 +107,38 @@ function Lista() {
   );
  }
  const styles = StyleSheet.create({
+  texto:{  
+    flexDirection: "row",
+    padding: 1,
+    color:'#ffff', 
+    textAlign:'center',
+    fontSize:25,
+   },
+   btnConsult:{
+    justifyContent: "center",
+    textAlign:'center',
+    elevation: 2,
+    borderRadius:50,
+    shadowColor:  'white',
+    height:50,  
+    fontWeight:'bold',
+    backgroundColor: '#0481FA',    
+    alignContent:'center',
+    marginVertical: 5,
+    marginHorizontal: 5,
+   },
+  intotal:{
+    backgroundColor: '#0481FA',
+    textAlign:'center',
+    color:'#ffff', 
+    fontSize:15,
+    },
+    intconf:{
+      backgroundColor: '#0481FA',
+      textAlign:'center',
+      color:'#ffff', 
+      fontSize:15,
+    },
   todo:{
     backgroundColor: '#7BB7F2',
     fontWeight:'bold',
