@@ -3,15 +3,16 @@ import {useState,useEffect} from 'react';
 import QRCodeScanner from 'react-native-qrcode-scanner'
 import { Text,Image,ActivityIndicator, ImageBackground,Linking,StyleSheet,Separator,
    TouchableOpacity, Alert, TouchableHighlight , View, Modal, Button,TextInput ,Pressable, ScrollView} from 'react-native';
+   import axios from 'axios';
 import AwesomeAlert from 'react-native-awesome-alerts';
-import { Colors,  DebugInstructions,  Header,  LearnMoreLinks,  ReloadInstructions,} from 'react-native/Libraries/NewAppScreen';
-import axios from 'axios';
 
-function Qr() {
+import { Colors,  DebugInstructions,  Header,  LearnMoreLinks,  ReloadInstructions,} from 'react-native/Libraries/NewAppScreen';
+
+
+function QrVip() {
 
   const [alert, setalert] = useState(false);
   const [alert1, setalert2] = useState(false);
-  const [alertinfo, sealertinfo] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [json, setjson] = useState([]);
   const [infAlert,setinfAlert]= useState('');
@@ -20,103 +21,121 @@ function Qr() {
   const [diavalid,setdiavalid]=useState('');
   const [eventvalida,seteventvalid]=useState('');
   
-
+  const [car1,setcar1]=useState(false);
+  const [car2,setcar2]=useState(false);
+  const [car3,setcar3]=useState(false);
 
  const showAlert = () => {
-  setalert2(true)
+  setalert(true)
   };
  
  const hideAlert = () => {
-  setalert2(false)
+   setalert(false)
   
   };
-
-
   const showAlert2 = () => {
     setalert(true)
     };
    
    const hideAlert2 = () => {
-    setalert(false)
+     setalert2(false)
     };
   
-    const showAlertinfo = () => {
-      sealertinfo(true)
-      };
-     
-     const hideAlertinfo = () => {
-      sealertinfo(false)
-      };
-    
-    
+    const [text, setText] = useState("");
+    const [qrser, setqrser] = useState(false);
 
-  const getQr = e => {
-    console.info(e.data)
+
+  
+  const alerta = e => {
+    console.info("leido "+e.data)
+   
+   
     async function getInfo() {
-      const response = await fetch('https://fullpassapi.azurewebsites.net/api/Qrs/BuscarPorQr/'+e.data);
+      const response = await fetch('https://syscontrol.azurewebsites.net/FLH/asistencia?QR=' + e.data + '');
       const invitado = await response.json();
+     
       return invitado;
     }
     
-    getInfo().then(data => {
+    getInfo().then(invitado => {
       
-          if(data.lngIdPaseyIdVip != null){
-            if(data.intTipo==1){
-              setjson(data)        
-              showAlert()
-             }
-            if(data.intTipo==2){         
-              setjson(data)        
-              showAlert2()
-            }
-          }else{
-            showAlertinfo()
-          }
+          
+       // console.info("datos del invitado"+invitado.nombreInvitado); 
+         let Bolvalid = parseInt(invitado.Bol_Validado)
+        // console.log("bolllll :"+Bolvalid) 
+
+        if(invitado.evento1==null){
+         // console.log("entra evento 1 null") 
+          setcar1(true)
+        }  
+        if(invitado.evento2==null){
+         // console.log("entra evento 2 null") 
+          setcar2(true)
+        }  
+        if(invitado.evento3==null){
+         // console.log("entra evento 3 null") 
+          setcar3(true)
+        }
+         if(Bolvalid==1 ){
+        //  console.log("entra 1") 
+           setcar1(true) 
+         }
+         if(Bolvalid==2 ){  
+          //console.log("entra 2")  
+           setcar1(true)
+           setcar2(true)
+         }
+         if(Bolvalid==3 ){          
+          //console.log("entra 3") 
+           setcar1(true)
+           setcar2(true)
+           setcar3(true)
+         }
+         setjson(invitado)        
+         showAlert()
     });
            
   }
  
-
+ //ACTIVA LA FUNCION DE ACTIVAR O CANCELAR ENTRADA
+  const onPress2 = (qr,dia,evento) =>{
+    setalert2(true)
+    setdiavalid(dia);
+    setqrvalid(qr);
+    seteventvalid(evento);
+    //console.info("click en entrada: "+ qr,dia,evento);
+    
+  } 
  // ENVIA QUE ENTRADA SE ESTA CONFRIMANDO 
-  const valid = (id) =>{
+  const valid = (qr,dia) =>{
 
+        console.info("peticion yes: "+ text);
         async function getconfirm() {
-          var url ='https://fullpassapi.azurewebsites.net/api/Qrs/ActulizarQr/'+id;         
+          var url ='https://syscontrol.azurewebsites.net/FLH/confirmarEntrada?QR='+qr+'&dia='+dia+'';
+         // console.info("mi url : "+url)
           const response = await fetch(url);
-          const enviado = await response.json();   
-              
+          const enviado = await response.json();
+          //console.info("datos del invitado: "+enviado); 
           return enviado;
         }
         
         getconfirm().then(enviado => {
-          
-         
-             hideAlert();
-             setjson('')
+             //console.info("datos del invitado2: "+enviado.Bol_Validado); 
+             hideAlert2()
+             onclose()
         });
     
   } 
-  const valid2 = (id) =>{
-
-    async function getconfirm() {
-      var url ='https://fullpassapi.azurewebsites.net/api/Qrs/ActulizarQr/'+id;         
-      const response = await fetch(url);
-      const enviado = await response.json();   
-          
-      return enviado;
-    }
-    
-    getconfirm().then(enviado => {
-      
-      hideAlert2();
-      setjson('')
-    });
-
-} 
 const onclose=()=>{
   setjson('')
-  hideAlert2()
-  hideAlert();
+  setModalVisible(!modalVisible);
+  setcar1(false)
+  setcar2(false)
+  setcar3(false)
+  setText("")
+  setqrser(true)
+  
+  console.log("se cieraa"+ qrser)
  
 }
 
@@ -126,7 +145,7 @@ const onclose=()=>{
    
         <QRCodeScanner
         containerStyle={{ paddingTop: 10,backgroundColor: '#000'}}
-        onRead={getQr}
+        onRead={alerta}
         reactivate={true}
         reactivateTimeout={5000}
         permissionDialogMessage="¿Puedo usar tu camara?"
@@ -135,72 +154,61 @@ const onclose=()=>{
         topContent={          
           <Text style={styles.tituloqr}>Full-Pass</Text>
         }    
-    
+        // bottomContent={
+        //   <TouchableOpacity>
+        //     <Text style={styles.qrfooter}>
+        //       Buscando...
+        //     </Text>
+        //     <ActivityIndicator size="large"  color="#00ff00" />
+        //   </TouchableOpacity>
+        // }       
         >          
         </QRCodeScanner>   
         </View>
-
-
+      <AwesomeAlert 
+        show={alert}
+        showProgress={true}
+        title="INVITADO ENCOTRADO"
+        message={json.nombreInvitado}
+        closeOnTouchOutside={true}
+        closeOnHardwareBackPress={false}
+        showCancelButton={false}
+        showConfirmButton={true}
+        confirmText="VERIFICAR ENTRADA"
+        confirmButtonColor="#DD6B55"
+        onConfirmPressed={() => {
+          hideAlert();
+          setModalVisible(true);
+        }}
+      />
+      
      <AwesomeAlert  
         show={alert1}
         showProgress={true}
         title="CONFIRMAR ENTRADA"
-        message={ "MESA " + json.intLugar}
+        message={eventvalida}
         closeOnTouchOutside={true}
         closeOnHardwareBackPress={false}
         showCancelButton={true}
         showConfirmButton={true}
-        confirmText="CONFIRMAR"
+        confirmText="VALIDAR"
         cancelText="CANCELAR"
         confirmButtonColor="green"
         cancelButtonColor="red"
         onConfirmPressed={() => {       
-          valid(json.lngIdPaseyIdVip);
+          valid(qrvalid,diavalid);
         }}
         onCancelPressed={() => {
-          hideAlert();
-        }}
-      /> 
-
-      <AwesomeAlert  
-        show={alert}
-        showProgress={true}
-        title="CONFIRMAR ENTRADA"
-        message={ "MESA " + json.intLugar}
-        closeOnTouchOutside={true}
-        closeOnHardwareBackPress={false}
-        showCancelButton={true}
-        showConfirmButton={true}
-        confirmText="CONFIRMAR"
-        cancelText="CANCELAR"
-        confirmButtonColor="green"
-        cancelButtonColor="red"
-        onConfirmPressed={() => {       
-          valid2(json.lngIdPaseyIdVip);
-        }}
-        onCancelPressed={() => {
+        
           hideAlert2();
         }}
       /> 
-     <AwesomeAlert  
-        show={alertinfo}
-        showProgress={true}
-        title="QR Usado"
-        message={ "El Qr encontrado ya fue usado"}
-        closeOnTouchOutside={true}
-        closeOnHardwareBackPress={false}
-        showCancelButton={true}
-        cancelText="OK"      
-        cancelButtonColor="red"       
-        onCancelPressed={() => {
-          hideAlertinfo();
-        }}
-      /> 
-      {/* <Modal animationType="slide" transparent={false} visible={modalVisible}>
+     
+      <Modal animationType="slide" transparent={false} visible={modalVisible}>
      
         <ScrollView>
           <Text style={styles.titulo}>Entrada de evento </Text>          
-        <TouchableOpacity style={styles.viewcard1}  onPress={() => { onPress2(json.Txt_QR,1,json.evento1) }} disabled={car1}  >          
+          {/* <TouchableOpacity style={styles.viewcard1}  onPress={() => { onPress2(json.Txt_QR,1,json.evento1) }} disabled={car1}  >          
                 <View style={styles.viewcardcontent}>  
                  {json.evento1==null ? <Text style={styles.usado}>SIN PASE {"\n"}DE {"\n"}ENTRADA</Text>: json.Bol_Validado == 1 || json.Bol_Validado == 2 || json.Bol_Validado == 3 ? <Text style={styles.usado}>ENTRADA {"\n"}USADA</Text>: <Text style={styles.tituloCard}></Text> }     
                
@@ -219,7 +227,7 @@ const onclose=()=>{
               }}
             />
              </View> 
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           <TouchableOpacity style={styles.viewcard2}  onPress={() => { onPress2(json.Txt_QR,2,json.evento2) }} disabled={car2}  >          
           <View style={styles.viewcardcontent}>  
                  {json.evento2==null ? <Text style={styles.usado}>SIN PASE {"\n"}DE {"\n"}ENTRADA</Text>: json.Bol_Validado == 2 || json.Bol_Validado == 3 ? <Text style={styles.usado}>ENTRADA {"\n"}USADA</Text>: <Text style={styles.tituloCard}></Text> }     
@@ -265,7 +273,7 @@ const onclose=()=>{
               </Text> 
           </TouchableOpacity>
         </ScrollView>
-      </Modal> */}
+      </Modal>
    
     </>
   );
@@ -433,4 +441,4 @@ inputsearch:{
 }
 });
 
-export default Qr;
+export default QrVip;

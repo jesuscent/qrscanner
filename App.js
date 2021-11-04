@@ -13,6 +13,7 @@ import * as React from 'react';
  import BuscarPorNombre from './BuscarPorNombre'
  import Lista from './Lista'
  import { enableScreens } from 'react-native-screens';
+ import QrVip from './QrVip';
  function App() {
 
   const [alert, setalert] = useState(false);
@@ -107,7 +108,7 @@ import * as React from 'react';
   } 
  // ENVIA QUE ENTRADA SE ESTA CONFRIMANDO 
   const valid = (qr,dia) =>{
-   debugger
+   
 
         console.info("peticion yes: "+ text);
         async function getconfirm() {
@@ -175,7 +176,7 @@ const Tab = createBottomTabNavigator();
           ),
         }}
       />
-      <Tab.Screen name="BuscarPorNombre" component={BuscarPorNombre} 
+      {/* <Tab.Screen name="QrVip" component={QrVip} 
       
       options={{
         tabBarIcon:({focused})=>(
@@ -189,12 +190,12 @@ const Tab = createBottomTabNavigator();
                 tintColor:focused ? '#e32f45':'#748c94',
               }}
             />
-            <Text>BUSCAR</Text>
+            <Text>QrVip</Text>
           </View>
         ),
       }}
-      />
-       <Tab.Screen name="Lista" component={Lista} 
+      /> */}
+       {/* <Tab.Screen name="Lista" component={Lista} 
       
       options={{
         tabBarIcon:({focused})=>(
@@ -212,7 +213,7 @@ const Tab = createBottomTabNavigator();
           </View>
         ),
       }}
-      />
+      /> */}
     </Tab.Navigator>
   </NavigationContainer>
    );
