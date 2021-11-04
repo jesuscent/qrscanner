@@ -3,7 +3,6 @@ import {useState,useEffect} from 'react';
 import QRCodeScanner from 'react-native-qrcode-scanner'
 import { Text,Image,ActivityIndicator, ImageBackground,Linking,StyleSheet,Separator,
    TouchableOpacity, Alert, TouchableHighlight , View, Modal, Button,TextInput ,Pressable, ScrollView} from 'react-native';
-   import axios from 'axios';
 import AwesomeAlert from 'react-native-awesome-alerts';
 
 import { Colors,  DebugInstructions,  Header,  LearnMoreLinks,  ReloadInstructions,} from 'react-native/Libraries/NewAppScreen';

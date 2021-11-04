@@ -12,96 +12,56 @@ import { color } from 'react-native-reanimated';
 function Lista() {
 
   const [json, setjson] = useState([]);
-  const [count, setCount] = useState(6);
   const [confirmados, setConfirmados] = useState();
 
 
   const lista = () => {
-
     async function getInfo() {
-      const response = await fetch('https://syscontrol.azurewebsites.net/FLH/ListaConfirmado?lista');
-      const lista = await response.json();
-      return lista;
+      const response = await fetch('https://fullpassapi.azurewebsites.net/api/Qrs/GetCountDatosQR');
+      const datos = await response.json();
+      return datos;
     }
-    getInfo().then(invitado => {
-      setjson(invitado) 
-      console.log(json);       
-      console.log("pasaas"+ invitado.length); 
-      setCount(invitado.length)
-      var cant = invitado.filter(o =>o.Bol_Validado==2).length;
-      setConfirmados(cant);
-      console.log("total confirmado"+ cant); 
-  });
-  }
+
+    getInfo().then(datos => {      
+      setjson(data)    
+      });
+    }
 
 
     useEffect(() => {
-      lista()
-
+    lista()
+   
   },[]);
 
-  const DATA = [
-    {
-      Txt_Nombre: "PABLO BUSTAMANTE",
-      Txt_NombreAcompañante: "Andrea Roncallo ",
-      Bol_Validado: 0,
-      Int_Status: 2
-  }
-];
-  const Item = ({ items }) => (
-    <View style={styles.item}>
-     
-
-      {items.Bol_Validado==0 ?       
-      <Text style={styles.todo} > 
-      INVITADO: {items.Txt_Nombre}{"\n"} 
-      ACOMPÑANTE: {items.Txt_NombreAcompañante}
-      </Text>  :null   }
-    
-      {items.Bol_Validado==1 ? 
-      <Text style={styles.evento1} > 
-      INVITADO: {items.Txt_Nombre}{"\n"}
-       ACOMPÑANTE: {items.Txt_NombreAcompañante}
-       </Text> :null   }
-  
-      {items.Bol_Validado==2 ?  
-      <Text style={styles.evento2}> 
-      INVITADO: {items.Txt_Nombre}{"\n"}
-       ACOMPÑANTE: {items.Txt_NombreAcompañante}
-       </Text>:null  }
-
-       {items.Bol_Validado==3 ?  
-       <Text style={styles.evento3}> 
-       INVITADO: {items.Txt_Nombre}{"\n"} 
-       ACOMPÑANTE: {items.Txt_NombreAcompañante} 
-       </Text> :null  }
  
-     
-
-    </View>
-  );
+ 
   return (
     <> 
   <View style={styles.centerText}>
 
   <View style={styles.centerText1}>
-    <Text style={styles.titulo}>LISTA DE INVITADOS
+    <Text style={styles.titulo}>ESTADÍSTICAS DE ENTRADA
     </Text> 
-    <Text style={styles.intotal}>Invitados Total: {count}</Text>
-    <Text style={styles.intconf}>Checkin: {confirmados}</Text>
-
     <TouchableOpacity style={styles.btnConsult} onPress={() => lista()}>
           <Text style={styles.texto}>
-              Consultar 
+              Consultar
               </Text> 
           </TouchableOpacity>
+        <TouchableOpacity style={styles.viewcard3}   >          
+          <View style={styles.viewcardcontent}> 
+          <Text style={styles.usado}>TOTAL POR VIP CONFIRMADO</Text>          
+          <Text style={styles.usado}>{json.countvip==null ? 0:json.countvip}</Text>
+          </View> 
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.viewcard3}   >          
+          <View style={styles.viewcardcontent}> 
+          <Text style={styles.usado}>TOTAL POR MESA CONFIRMADO</Text>          
+          <Text style={styles.usado}>{json.countlugar==null ? 0:json.countlugar}</Text>
+          </View> 
+          </TouchableOpacity>
+   </View>
 
-    <FlatList
-          data={json}          
-          renderItem={({ item }) => <Item items={item} />}
-          keyExtractor={(item, index) => item + index}
-        />
-          </View>
+          
   </View>
     </>
   );
@@ -113,7 +73,17 @@ function Lista() {
     color:'#ffff', 
     textAlign:'center',
     fontSize:25,
-   },
+   }, usado:{
+    fontSize: 22,
+    padding: 10,
+    fontWeight:'bold',
+    textAlign:'center',
+    color:'#FFFFFF', 
+  },tituloCard:{
+    textAlign:'center',
+    fontWeight:'bold',
+    color:'#FFFFFF', 
+  },
    btnConsult:{
     justifyContent: "center",
     textAlign:'center',
@@ -126,15 +96,24 @@ function Lista() {
     alignContent:'center',
     marginVertical: 5,
     marginHorizontal: 5,
+   },viewcardcontent:{
+    flexDirection: "column",
+    shadowColor: '#0481FA',
+    width:'100%',
+    height:'auto',
+    padding: 10,
+    marginLeft:5,
+    alignItems:'stretch',
+    textAlign:'center',
    },
   intotal:{
-    backgroundColor: '#0481FA',
+    backgroundColor: '#000',
     textAlign:'center',
     color:'#ffff', 
     fontSize:15,
     },
     intconf:{
-      backgroundColor: '#0481FA',
+      backgroundColor: '#000',
       textAlign:'center',
       color:'#ffff', 
       fontSize:15,
@@ -167,7 +146,8 @@ function Lista() {
     flex: 1,
     fontSize: 20,
     paddingBottom: 100,
-    color: '#777',
+    color: 'red',
+    backgroundColor: '#000000',  
   }, 
   centerText1: {
     flex: 1,
@@ -191,12 +171,24 @@ function Lista() {
   },
    titulo:{
      textAlign:'center',
-     fontSize:30,
+     fontSize:25,
      fontWeight:'bold', 
-     backgroundColor: '#0481FA',
+     backgroundColor: '#000',
      paddingBottom:2,
      marginBottom:4,
-      color:'#FFFFFF', 
-   }
+      color:'red', 
+   },
+   viewcard3:{
+    flexDirection: "row",
+    flexWrap: "wrap",
+    shadowColor: '#0481FA',
+    shadowOffset: { width: 5, height: 6 },
+    shadowRadius: 4,
+    shadowOpacity: 0.50,
+    elevation: 10,
+    backgroundColor: '#9C0D08',  
+    borderRadius: 15,
+    margin:5,  
+   },
 });
  export default Lista;

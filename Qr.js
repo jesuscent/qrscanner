@@ -5,13 +5,15 @@ import { Text,Image,ActivityIndicator, ImageBackground,Linking,StyleSheet,Separa
    TouchableOpacity, Alert, TouchableHighlight , View, Modal, Button,TextInput ,Pressable, ScrollView} from 'react-native';
 import AwesomeAlert from 'react-native-awesome-alerts';
 import { Colors,  DebugInstructions,  Header,  LearnMoreLinks,  ReloadInstructions,} from 'react-native/Libraries/NewAppScreen';
-import axios from 'axios';
+
 
 function Qr() {
 
   const [alert, setalert] = useState(false);
   const [alert1, setalert2] = useState(false);
   const [alertinfo, sealertinfo] = useState(false);
+  const [alertwelcom, sealalertwelcom] = useState(false);
+
   const [modalVisible, setModalVisible] = useState(false);
   const [json, setjson] = useState([]);
   const [infAlert,setinfAlert]= useState('');
@@ -48,7 +50,9 @@ function Qr() {
       sealertinfo(false)
       };
     
-    
+      const hideAlertlertwelcom = () => {
+        sealalertwelcom(false)
+        };
 
   const getQr = e => {
     console.info(e.data)
@@ -79,7 +83,7 @@ function Qr() {
 
  // ENVIA QUE ENTRADA SE ESTA CONFRIMANDO 
   const valid = (id) =>{
-
+    setalert2(false)
         async function getconfirm() {
           var url ='https://fullpassapi.azurewebsites.net/api/Qrs/ActulizarQr/'+id;         
           const response = await fetch(url);
@@ -89,15 +93,13 @@ function Qr() {
         }
         
         getconfirm().then(enviado => {
-          
-         
-             hideAlert();
+          sealalertwelcom(true)
              setjson('')
         });
     
   } 
   const valid2 = (id) =>{
-
+    setalert(false)
     async function getconfirm() {
       var url ='https://fullpassapi.azurewebsites.net/api/Qrs/ActulizarQr/'+id;         
       const response = await fetch(url);
@@ -108,7 +110,7 @@ function Qr() {
     
     getconfirm().then(enviado => {
       
-      hideAlert2();
+      sealalertwelcom(true)
       setjson('')
     });
 
@@ -166,7 +168,7 @@ const onclose=()=>{
         show={alert}
         showProgress={true}
         title="CONFIRMAR ENTRADA"
-        message={ "MESA " + json.intLugar}
+        message={ "Nombre: " + json.txtNombre}
         closeOnTouchOutside={true}
         closeOnHardwareBackPress={false}
         showCancelButton={true}
@@ -185,15 +187,31 @@ const onclose=()=>{
      <AwesomeAlert  
         show={alertinfo}
         showProgress={true}
-        title="QR Usado"
-        message={ "El Qr encontrado ya fue usado"}
+        title="El QR ya no está disponible"
+        message={ "........"}
         closeOnTouchOutside={true}
         closeOnHardwareBackPress={false}
         showCancelButton={true}
-        cancelText="OK"      
+        cancelText="       OK       "      
         cancelButtonColor="red"       
         onCancelPressed={() => {
           hideAlertinfo();
+        }}
+      
+      /> 
+
+<AwesomeAlert  
+        show={alertwelcom}
+        showProgress={true}
+        title="Bienvenido"
+        message={ "QR Confirmado"}
+        closeOnTouchOutside={true}
+        closeOnHardwareBackPress={false}
+        showConfirmButton={true}
+        confirmText="CONFIRMAR"      
+        confirmButtonColor="green"      
+        onConfirmPressed={() => {       
+          hideAlertlertwelcom();
         }}
       /> 
       {/* <Modal animationType="slide" transparent={false} visible={modalVisible}>
