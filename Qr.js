@@ -147,7 +147,7 @@ const onclose=()=>{
         show={alert1}
         showProgress={true}
         title="CONFIRMAR ENTRADA"
-        message={ "MESA " + json.intLugar}
+        message={ "Invitado "+json.txtNombre +" de la mesa " + json.intLugar +" Por "+ json.txtNombrec}
         closeOnTouchOutside={true}
         closeOnHardwareBackPress={false}
         showCancelButton={true}
