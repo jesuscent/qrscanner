@@ -23,7 +23,8 @@ function Lista() {
     }
 
     getInfo().then(datos => {      
-      setjson(data)    
+      setjson(datos)
+      console.info(datos)    
       });
     }
 
